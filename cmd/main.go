@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/binwee/go-sample/internal/config"
+	"github.com/binwee/go-sample/internal/database"
+	"github.com/binwee/go-sample/internal/handlers"
+	"github.com/binwee/go-sample/internal/models"
+	"github.com/binwee/go-sample/internal/repositories"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,13 +17,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	r := gin.Default()
-	r.GET("/hello", hello)
-	log.Fatal(r.Run(fmt.Sprintf(":%d", cfg.Server.Port)))
-}
+	db := database.GetDb(cfg)
+	err = models.AutoMigrate(db)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-func hello(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello World",
-	})
+	bookRepository := repositories.NewBookmarkRepository(db)
+	bookHandler := handlers.NewBookHandler(bookRepository)
+
+	r := gin.Default()
+	r.GET("/api/getall", bookHandler.GetAll)
+	r.Run(fmt.Sprintf(":%d", cfg.Server.Port))
+
 }

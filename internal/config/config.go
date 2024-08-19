@@ -4,6 +4,7 @@ import "github.com/spf13/viper"
 
 type AppConfig struct {
 	Server Server
+	Mysql  Mysql
 }
 
 type Server struct {
