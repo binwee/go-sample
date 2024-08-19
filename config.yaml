@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+mysql:
+  username: "root"
+  password: "root"
+  ip: "10.203.63.35"
+  port: 3306
+  dbName: "golang"
+  params: "charset=utf8mb4&parseTime=True&loc=Local"
