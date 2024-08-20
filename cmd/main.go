@@ -29,7 +29,10 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/api/getall", bookHandler.GetAll)
+	r.GET("/api/getbyid", bookHandler.GetById)
 	r.POST("/api/create", bookHandler.Create)
+	r.PUT("/api/update", bookHandler.Update)
+	r.DELETE("/api/delete", bookHandler.Delete)
 
 	r.Run(fmt.Sprintf(":%d", cfg.Server.Port))
 

@@ -28,6 +28,22 @@ func (handler BookHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func (handler BookHandler) GetById(c *gin.Context) {
+	ctx := c.Request.Context()
+	var book models.Book
+	err := c.ShouldBindJSON(&book)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	result, err := handler.repo.GetByID(ctx, int(book.ID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
 func (handler BookHandler) Create(c *gin.Context) {
 	ctx := c.Request.Context()
 	var book models.Book
@@ -42,4 +58,37 @@ func (handler BookHandler) Create(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, result)
+}
+
+func (handler BookHandler) Update(c *gin.Context) {
+	ctx := c.Request.Context()
+	var book models.Book
+	err := c.ShouldBindJSON(&book)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err = handler.repo.Update(ctx, &book)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}
+
+func (handler BookHandler) Delete(c *gin.Context) {
+	ctx := c.Request.Context()
+	var book models.Book
+	err := c.ShouldBindJSON(&book)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err = handler.repo.Delete(ctx, int(book.ID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+
 }

@@ -32,7 +32,9 @@ func (r bookmarkRepo) GetAll(ctx context.Context) (*[]models.Book, error) {
 }
 
 func (r bookmarkRepo) GetByID(ctx context.Context, id int) (*models.Book, error) {
-	return nil, nil
+	var book models.Book
+	result := r.db.First(&book, id)
+	return &book, result.Error
 }
 
 func (r bookmarkRepo) Create(ctx context.Context, m *models.Book) (*models.Book, error) {
@@ -41,9 +43,11 @@ func (r bookmarkRepo) Create(ctx context.Context, m *models.Book) (*models.Book,
 }
 
 func (r bookmarkRepo) Update(ctx context.Context, m *models.Book) error {
-	return nil
+	result := r.db.Updates(m)
+	return result.Error
 }
 
 func (r bookmarkRepo) Delete(ctx context.Context, id int) error {
-	return nil
+	result := r.db.Delete(&models.Book{}, id)
+	return result.Error
 }
