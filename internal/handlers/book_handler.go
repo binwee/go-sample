@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/binwee/go-sample/internal/models"
 	"github.com/binwee/go-sample/internal/repositories"
 	"github.com/gin-gonic/gin"
 )
@@ -19,13 +20,26 @@ func NewBookHandler(repo repositories.BookmarkRepository) *BookHandler {
 
 func (handler BookHandler) GetAll(c *gin.Context) {
 	ctx := c.Request.Context()
-	bookmarks, err := handler.repo.GetAll(ctx)
+	result, err := handler.repo.GetAll(ctx)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, bookmarks)
+	c.JSON(http.StatusOK, result)
+}
 
+func (handler BookHandler) Create(c *gin.Context) {
+	ctx := c.Request.Context()
+	var book models.Book
+	err := c.ShouldBindJSON(&book)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	result, err := handler.repo.Create(ctx, &book)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }

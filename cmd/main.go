@@ -27,7 +27,10 @@ func main() {
 	bookHandler := handlers.NewBookHandler(bookRepository)
 
 	r := gin.Default()
+
 	r.GET("/api/getall", bookHandler.GetAll)
+	r.POST("/api/create", bookHandler.Create)
+
 	r.Run(fmt.Sprintf(":%d", cfg.Server.Port))
 
 }
